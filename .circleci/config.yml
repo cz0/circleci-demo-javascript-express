@@ -1,7 +1,6 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/circleci-steman-api
     docker:
     - image: circleci/python:3.6.5
       environment:
@@ -31,21 +30,42 @@ jobs:
         name: Running make commands
         command: |
           make
+    - deploy:
+        name: Deploy Master to Heroku
+        command: |
+          echo 'dev'
   promote:
-    machine:
-      enabled: true
+    docker:
+    - image: circleci/python:3.6.5
+      environment:
+      PIPENV_VENV_IN_PROJECT: true
     steps:
-      - deploy:
-          name: Deploy Master to Heroku
-          branches:
-            only: dev
-          command: |
-            echo 'dev'
-      - deploy:
+    - checkout
+    - run: sudo chown -R circleci:circleci /usr/local/bin
+    - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+    - restore_cache:  # ensure this step occurs *before* installing dependencies
+        key: dependency-cache-{{ checksum "requirements.txt" }}
+    - run:
+        name: Installing requirements
+        command: |
+          pip3 install -r requirements.txt
+    - save_cache:
+        key: dependency-cache-{{ checksum "requirements.txt" }}
+        paths:
+        - ".venv"
+        - "/usr/local/bin"
+        - "/usr/local/lib/python3.6/site-packages"
+    - run:
+        name: Running scripts
+        command: |
+          python ab.py
+          python appp.py
+    - run:
+        name: Running make commands
+        command: |
+          make
+    - deploy:
           name: Deploy Master to Heroku2
-          branches:
-            only:
-            - prod
           command: |
             echo 'prod'
       - run:
@@ -58,7 +78,11 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-    - build
+    - build:
+        filters:
+          branches:
+            only: dev
     - promote:
-        requires:
-        - build
+        filters:
+          branches:
+            only: master
