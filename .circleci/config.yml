@@ -32,6 +32,8 @@ jobs:
         command: |
           make
   promote:
+    machine:
+      enabled: true
     steps:
       - deploy:
           name: Deploy Master to Heroku
