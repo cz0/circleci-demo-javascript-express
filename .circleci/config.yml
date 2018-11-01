@@ -31,19 +31,26 @@ jobs:
         name: Running make commands
         command: |
           make
+  promote:
     - deploy:
         name: Deploy Master to Heroku
         branches:
-          only:
-          - dev
+          only: dev
         command: |
           echo 'dev'
     - deploy:
         name: Deploy Master to Heroku2
         branches:
           only:
-          - stg
           - prod
         command: |
           echo 'prod'
 
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+    - build
+    - promote:
+        requires:
+        - build
