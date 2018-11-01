@@ -32,19 +32,20 @@ jobs:
         command: |
           make
   promote:
-    - deploy:
-        name: Deploy Master to Heroku
-        branches:
-          only: dev
-        command: |
-          echo 'dev'
-    - deploy:
-        name: Deploy Master to Heroku2
-        branches:
-          only:
-          - prod
-        command: |
-          echo 'prod'
+    steps:
+      - deploy:
+          name: Deploy Master to Heroku
+          branches:
+            only: dev
+          command: |
+            echo 'dev'
+      - deploy:
+          name: Deploy Master to Heroku2
+          branches:
+            only:
+            - prod
+          command: |
+            echo 'prod'
 
 workflows:
   version: 2
