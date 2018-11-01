@@ -1,0 +1,8 @@
+# Pip Requirements
+
+## General
+python-dotenv==0.7.1
+psycopg2==2.7.3.2
+redis==2.10.6
+torch==0.4.1
+kin-sdk==2.0.0
