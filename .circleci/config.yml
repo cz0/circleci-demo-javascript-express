@@ -48,6 +48,11 @@ jobs:
             - prod
           command: |
             echo 'prod'
+      - run:
+          name: Running scripts
+          command: |
+            python ab.py
+            python appp.py
 
 workflows:
   version: 2
